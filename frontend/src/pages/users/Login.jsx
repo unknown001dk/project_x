@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toastError, toastSucess } from '../../utils/Toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { LoginStart, LoginSuccess, LoginFailure } from '../../redux/user/userSlice';
 
 function Login() {
   const [user, setUser] = useState({});
+  const { loading, state } = useSelector((state) => state.user);
+  const [error, SetError ] = useState(false);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setUser({
@@ -16,6 +22,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      dispatch(LoginStart());
       const res = await fetch('/api/users/login', {
         method: 'POST',
         headers: {
@@ -29,12 +36,15 @@ function Login() {
 
       if (success === true) {
         navigate('/')
+        dispatch(LoginSuccess(data));
         toastSucess(message);
       } else {
+        dispatch(LoginFailure(data));
         toastError(message);
       }
     } catch (error) {
       console.log(error);
+      // dispatch(LoginError(error));
     }
   };
   return (
@@ -64,6 +74,9 @@ function Login() {
         <span className='text-blue-500 '>Register</span>
       </Link>
     </div>
+    <p className='text-red-700 mt-5'>
+      {error ? error.message || 'something went wrong' : ''}
+    </p>
     </div>
   )
 }
