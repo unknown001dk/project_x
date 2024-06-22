@@ -35,7 +35,6 @@ function Register() {
       } else {
         toastError(message);
       }
-      // console.log(data);
     } catch (error) {
       console.log(error);
     }

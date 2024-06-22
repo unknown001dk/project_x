@@ -42,7 +42,7 @@ export const registerUser = async(req, res) => {
   }
 };
 
-export const loginUser = async (req, res, next) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email ||!password) {
@@ -80,7 +80,12 @@ export const loginUser = async (req, res, next) => {
     res
       .cookie('token', token, { httpOnly:true, expires: expiryDate })
       .status(200)
-      .json(rest)
+      .json({
+        message: 'Login sucessfully',
+        status: 200,
+        success: true,
+        ...rest,
+      })
 
   } catch (error) {
     console.log(error);
